@@ -5,9 +5,9 @@ dotEnv.config({
 import express, { Express } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-// import errorHandler from "./middlewares/errorHandler.middleware";
 
 import { CORS_ORIGIN } from "./constants/getEnv";
+import errorHandler from "./middlewares/errorHandler.middleware";
 const app: Express = express();
 
 //middlewares
@@ -26,10 +26,12 @@ app.use(cors(corsOptions));
 //cookie middleware
 app.use(cookieParser());
 
-// app.use(errorHandler);
 
-// import routes and declaration
+
+// import routes and declaratio
 
 //  use routes
+
+app.use(errorHandler );
 
 export { app };
