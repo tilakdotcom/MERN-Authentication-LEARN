@@ -19,7 +19,6 @@ const userSchema = new Schema<userDocument>(
     password: {
       type: "string",
       required: true,
-      select: false,
     },
     userAgent: {
       type: "string",
@@ -30,14 +29,17 @@ const userSchema = new Schema<userDocument>(
   }
 );
 
+
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return;
+  if (!this.isModified("password")) {
+    return next();
+  }
   this.password = await passwordHasher(this.password);
   next();
 });
 
-userSchema.methods.comparePassword = async function (password: string) {
-  return await passwordCompare(password, this.password);
+userSchema.methods.comparePassword = async function (pass: string) {
+  return await passwordCompare( pass, this.password);
 };
 
 const User = mongoose.model<userDocument>("User", userSchema);

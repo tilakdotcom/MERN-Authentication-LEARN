@@ -1,25 +1,11 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
-export const passwordHasher = async (password: string): Promise<string> => {
+
+export const passwordHasher = async (pass:string)=>{
   const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
-};
+  return await bcrypt.hash(pass, salt);
+}
 
-// export const passwordCompare = async (
-//   password: string,
-//   hashedPassword: string
-// ): Promise<boolean> => {
-//   return await bcrypt.compare(password, hashedPassword);
-// };
-
-export const passwordCompare = async (
-  password: string,
-  hashedPassword: string
-): Promise<boolean> => {
-  try {
-    return await bcrypt.compare(password, hashedPassword);
-  } catch (error) {
-    console.error('Error comparing passwords:', error);
-    return false;
-  }
-};
+export const passwordCompare = async (pass:string, hashedPass:string)=>{
+  return await bcrypt.compare(pass, hashedPass);
+}
