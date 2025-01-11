@@ -7,6 +7,7 @@ import VerifyCationCode from "../models/verificationCode.model";
 import appAssert from "../utils/appAssert";
 import { oneYearFromNow } from "../utils/date-time";
 import jwt from "jsonwebtoken";
+import { refreshTokenSignOptions, signToken } from "../utils/tokenHelper";
 
 type createUserData = {
   email: string;
@@ -41,15 +42,13 @@ export const createUser = async (data: createUserData) => {
     userAgent: data.userAgent || undefined,
   });
 
-  const refreshToken = jwt.sign({ userId }, REFRESH_TOKEN_SECRET, {
-    expiresIn: "30d",
-    audience: ["user"],
-  });
+  const sessionInfo = {
+    sessionId: session._id,
+  };
 
-  const accessToken = jwt.sign({ userId }, ACCESS_TOKEN_SECRET, {
-    expiresIn: "15m",
-    audience: ["user"],
-  });
+  const refreshToken = signToken(sessionInfo, refreshTokenSignOptions);
+
+  const accessToken = signToken({ ...sessionInfo, userId });
 
   return {
     user,
@@ -83,29 +82,9 @@ export const loginUser = async (data: loginUserData) => {
     sessionId: session._id,
   };
 
-  const refreshToken = jwt.sign(
-    {
-      ...sessionInfo,
-      userId,
-    },
-    REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: "30d",
-      audience: ["user"],
-    }
-  );
+  const refreshToken = signToken(sessionInfo, refreshTokenSignOptions);
 
-  const accessToken = jwt.sign(
-    {
-      ...sessionInfo,
-      userId,
-    },
-    ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: "15m",
-      audience: ["user"],
-    }
-  );
+  const accessToken = signToken({ ...sessionInfo, userId });
 
   return {
     user,
