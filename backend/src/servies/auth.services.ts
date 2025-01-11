@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_EXPIRE, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_EXPIRE, REFRESH_TOKEN_SECRET } from "../constants/getEnv";
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants/getEnv";
 import VerifyCationType from "../constants/verificationCodeType";
 import Session from "../models/session.model";
 import User from "../models/user.model";
