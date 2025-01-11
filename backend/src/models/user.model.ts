@@ -2,7 +2,6 @@ import mongoose, { Document, Schema } from "mongoose";
 import { passwordCompare, passwordHasher } from "../utils/bcrypt";
 
 export interface userDocument extends Document {
-  username: string;
   email: string;
   password: string;
   userAgent?: string;
@@ -11,11 +10,6 @@ export interface userDocument extends Document {
 
 const userSchema = new Schema<userDocument>(
   {
-    username: {
-      type: "string",
-      required: true,
-      trim: true,
-    },
     email: {
       type: "string",
       required: true,

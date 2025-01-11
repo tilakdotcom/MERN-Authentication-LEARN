@@ -5,14 +5,13 @@ import { createUser } from "../servies/auth.services";
 import { setAuthCookies } from "../utils/cookies";
 
 const registerSchema = z.object({
-  username: z.string().min(3).max(50),
   email: z.string().email(),
   password: z.string().min(8).max(100),
   userAgent: z.string().optional(),
 });
 
 const registerHandler = asyncHandler(async (req, res) => {
-  const userAgent = req.headers["User-Agent"];
+  const userAgent = req.headers["user-agent"];
   const body = registerSchema.parse({
     ...req.body,
     userAgent,

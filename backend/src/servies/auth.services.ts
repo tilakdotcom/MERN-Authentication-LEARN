@@ -7,7 +7,6 @@ import { oneYearFromNow } from "../utils/date-time";
 import jwt from "jsonwebtoken";
 
 type createUserData = {
-  username: string;
   email: string;
   password: string;
   userAgent?: string;
@@ -22,7 +21,6 @@ const createUser = async (data: createUserData) => {
 
   //create a new user
   const user = await User.create({
-    name: data.username,
     email: data.email,
     password: data.password,
     userAgent: data.userAgent || undefined,
@@ -34,7 +32,7 @@ const createUser = async (data: createUserData) => {
     userId,
     code: "123213",
     type: VerifyCationType.VERIFY_EMAIL,
-    expiresAt: oneYearFromNow,
+    expiresAt: oneYearFromNow(),
   });
 
   //send verification email
