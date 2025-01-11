@@ -30,4 +30,11 @@ const setAuthCookies = ({
   accessToken,
   refreshToken,
   res,
-}: SetAuthParams) => {};
+}: SetAuthParams) => {
+  return res
+  .cookie("accessToken",accessToken,getAccessTokenCookiesOptions())
+  .cookie("refreshToken",refreshToken,getRefreshTokenCookiesOptions())
+};
+
+
+export { setAuthCookies };

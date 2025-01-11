@@ -2,6 +2,7 @@ import asyncHandler from "../middlewares/asyncHandler.middleware";
 import { CREATED } from "../constants/http";
 import { z } from "zod";
 import { createUser } from "../servies/auth.services";
+import { setAuthCookies } from "../utils/cookies";
 
 const registerSchema = z.object({
   username: z.string().min(3).max(50),
@@ -19,7 +20,12 @@ const registerHandler = asyncHandler(async (req, res) => {
 
   const { accessToken, refreshToken, session, user } = await createUser(body);
 
-  res.status(CREATED).json({ message: "User registered successfully!" });
+  return setAuthCookies({ accessToken, refreshToken, res })
+    .status(CREATED)
+    .json({
+      message: "User registered successfully!",
+      data: user,
+    });
 });
 
 export { registerHandler };
