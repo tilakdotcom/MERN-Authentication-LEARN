@@ -9,16 +9,19 @@ const handleZodError = (res: Response, error: z.ZodError) => {
   }));
 
   return res.status(BAD_REQUEST).json({
-    message : error.message,
-    errors
-  })
+    message: error.message,
+    errors,
+  });
 };
 const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   console.log(`Error occured PATH: ${req.path}`, error);
-  if(error instanceof z.ZodError){
-    return handleZodError(res, error)
+  if (error instanceof z.ZodError) {
+    return handleZodError(res, error);
   }
-  return res.status(INTERNAL_SERVER_ERROR).send(error);
+  return res.status(INTERNAL_SERVER_ERROR).json({
+    errorCode: error.statusCode,
+    message: error.message,
+  });
 };
 
 export default errorHandler;

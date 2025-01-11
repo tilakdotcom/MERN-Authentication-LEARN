@@ -1,8 +1,10 @@
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants/getEnv";
+import { CONFLICT } from "../constants/http";
 import VerifyCationType from "../constants/verificationCodeType";
 import Session from "../models/session.model";
 import User from "../models/user.model";
 import VerifyCationCode from "../models/verificationCode.model";
+import appAssert from "../utils/appAssert";
 import { oneYearFromNow } from "../utils/date-time";
 import jwt from "jsonwebtoken";
 
@@ -15,9 +17,8 @@ type createUserData = {
 const createUser = async (data: createUserData) => {
   //check if user is already existing
   const existingUser = await User.exists({ email: data.email });
-  if (existingUser) {
-    throw new Error("User already exists");
-  }
+  appAssert(!existingUser,CONFLICT ,"User already exists",)
+
 
   //create a new user
   const user = await User.create({
