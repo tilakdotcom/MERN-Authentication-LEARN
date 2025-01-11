@@ -10,25 +10,30 @@ interface VerifyCationCodeDocument extends Document {
   updatedAt: Date;
 }
 
-const VerifyCationCodeSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    index: true,
+const VerifyCationCodeSchema = new Schema(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      index: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    code: {
+      type: String,
+      required: true,
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+    },
   },
-  type: {
-    type: String,
-    required: true,
-  },
-  code: {
-    type: String,
-    required: true,
-  },
-  expiresAt: {
-    type: Date,
-    required: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const VerifyCationCode = mongoose.model<VerifyCationCodeDocument>(
   "VerifyCationCode",

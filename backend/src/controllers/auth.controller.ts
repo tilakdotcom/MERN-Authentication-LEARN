@@ -1,6 +1,7 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware";
 import { CREATED } from "../constants/http";
 import { z } from "zod";
+import { createUser } from "../servies/auth.services";
 
 const registerSchema = z.object({
   username: z.string().min(3).max(50),
@@ -15,6 +16,8 @@ const registerHandler = asyncHandler(async (req, res) => {
     ...req.body,
     userAgent,
   });
+
+  const { accessToken, refreshToken, session, user } = await createUser(body);
 
   res.status(CREATED).json({ message: "User registered successfully!" });
 });

@@ -9,41 +9,43 @@ export interface userDocument extends Document {
   comparePassword: (password: string) => Promise<boolean>;
 }
 
-const userSchema = new Schema<userDocument>({
-  username: {
-    type: "string",
-    required: true,
-    trim: true,
+const userSchema = new Schema<userDocument>(
+  {
+    username: {
+      type: "string",
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: "string",
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+    password: {
+      type: "string",
+      required: true,
+      select: false,
+    },
+    userAgent: {
+      type: "string",
+    },
   },
-  email: {
-    type: "string",
-    required: true,
-    trim: true,
-    lowercase: true,
-  },
-  password: {
-    type: "string",
-    required: true,
-    select: false,
-  },
-  userAgent: {
-    type: "string",
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
-userSchema.pre("save",async function (next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return;
   this.password = await passwordHasher(this.password);
   next();
+});
 
-})
-
-
-userSchema.methods.comparePassword = async function (password:string) {
-  return await  passwordCompare(password, this.password);
+userSchema.methods.comparePassword = async function (password: string) {
+  return await passwordCompare(password, this.password);
 };
 
+const User = mongoose.model<userDocument>("User", userSchema);
 
-const User = mongoose.model<userDocument>("User",userSchema)
-
-export default User
+export default User;
