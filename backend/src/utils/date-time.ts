@@ -10,3 +10,5 @@ export const thirtyDaysFromNow = ():Date => (
 export const  FifteenMinutesFromNow = ():Date=>(
   new Date(Date.now() + 15 * 60 * 1000) // 15 minutes from now in milliseconds
 )
+
+export const oneDayInMS = 24 * 60 * 60 *  1000;

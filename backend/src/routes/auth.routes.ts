@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginHandler, logoutHandler, registerHandler } from "../controllers/auth.controller";
+import { loginHandler, logoutHandler, refreshHandler, registerHandler } from "../controllers/auth.controller";
 // import verifyUser from "../middlewares/verifyUser.middleware";
 
 
@@ -11,6 +11,8 @@ router.route("/register").post(registerHandler)
 router.route("/login").post(loginHandler)
 
 router.route("/logout").get(logoutHandler)
+
+router.route("/refresh").get(refreshHandler,)
 
 
 
