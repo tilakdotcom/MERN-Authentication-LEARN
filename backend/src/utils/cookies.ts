@@ -7,6 +7,7 @@ type SetAuthParams = {
   refreshToken: string;
 };
 
+export const  REFRESH_PATH = "/auth/refresh"
 const defaultCookies: CookieOptions = {
   httpOnly: true,
   sameSite: "strict",
@@ -22,7 +23,7 @@ const getRefreshTokenCookiesOptions = (): CookieOptions => {
   return {
     ...defaultCookies,
     expires: thirtyDaysFromNow(), // 30 days
-    path: "/auth/refresh",
+    path: REFRESH_PATH,
   };
 };
 
@@ -37,4 +38,10 @@ const setAuthCookies = ({
 };
 
 
-export { setAuthCookies };
+const clearAuthCookie =(res:Response)=>{
+  return res.clearCookie("accessToken").clearCookie("refreshToken",{
+    path: REFRESH_PATH,
+  });
+}
+
+export { setAuthCookies,clearAuthCookie };
