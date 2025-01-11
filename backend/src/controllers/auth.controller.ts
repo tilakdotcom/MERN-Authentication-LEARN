@@ -1,14 +1,8 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware";
-import { CREATED } from "../constants/http";
-import { z } from "zod";
-import { createUser } from "../servies/auth.services";
+import { CREATED ,OK} from "../constants/http";
+import { createUser, loginUser } from "../servies/auth.services";
 import { setAuthCookies } from "../utils/cookies";
-
-const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8).max(100),
-  userAgent: z.string().optional(),
-});
+import { loginSchema, registerSchema } from "./auth.schema";
 
 const registerHandler = asyncHandler(async (req, res) => {
   const userAgent = req.headers["user-agent"];
@@ -17,7 +11,7 @@ const registerHandler = asyncHandler(async (req, res) => {
     userAgent,
   });
 
-  const { accessToken, refreshToken, session, user } = await createUser(body);
+  const { accessToken, refreshToken, user } = await createUser(body);
 
   return setAuthCookies({ accessToken, refreshToken, res })
     .status(CREATED)
@@ -27,4 +21,18 @@ const registerHandler = asyncHandler(async (req, res) => {
     });
 });
 
-export { registerHandler };
+const loginHandler =asyncHandler(async (req, res)=>{
+  const userAgent = req.headers["user-agent"];
+  const body = loginSchema.parse({
+    ...req.body,
+    userAgent,
+  });
+
+  const {accessToken,refreshToken,user} =await loginUser(body)
+  return setAuthCookies({accessToken,refreshToken,res}).status(OK).json({
+    message : "user Login SuccessFully",
+    data:user
+  })
+})
+
+export { registerHandler,loginHandler };

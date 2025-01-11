@@ -1,5 +1,5 @@
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../constants/getEnv";
-import { CONFLICT } from "../constants/http";
+import { CONFLICT, UNAUTHORIZED } from "../constants/http";
 import VerifyCationType from "../constants/verificationCodeType";
 import Session from "../models/session.model";
 import User from "../models/user.model";
@@ -14,11 +14,10 @@ type createUserData = {
   userAgent?: string;
 };
 
-const createUser = async (data: createUserData) => {
+export const createUser = async (data: createUserData) => {
   //check if user is already existing
   const existingUser = await User.exists({ email: data.email });
-  appAssert(!existingUser,CONFLICT ,"User already exists",)
-
+  appAssert(!existingUser, CONFLICT, "User already exists");
 
   //create a new user
   const user = await User.create({
@@ -54,9 +53,63 @@ const createUser = async (data: createUserData) => {
 
   return {
     user,
-    session,
     accessToken,
     refreshToken,
   };
 };
-export { createUser };
+
+type loginUserData = {
+  email: string;
+  password: string;
+  userAgent?: string;
+};
+
+export const loginUser = async (data: loginUserData) => {
+  const user = await User.findOne({ email: data.email });
+
+  appAssert(user, UNAUTHORIZED, "invalid user");
+
+  const isValid = await user.comparePassword(data.password);
+  appAssert(isValid, UNAUTHORIZED, "invalid  user password");
+
+  const userId = user._id;
+
+  const session = await Session.create({
+    userId,
+    userAgent: data.userAgent || undefined,
+  });
+
+  const sessionInfo = {
+    sessionId: session._id,
+  };
+
+  const refreshToken = jwt.sign(
+    {
+      ...sessionInfo,
+      userId,
+    },
+    REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: "30d",
+      audience: ["user"],
+    }
+  );
+
+  const accessToken = jwt.sign(
+    {
+      ...sessionInfo,
+      userId,
+    },
+    ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: "15m",
+      audience: ["user"],
+    }
+  );
+
+  return {
+    user,
+    accessToken,
+    refreshToken,
+  };
+};
