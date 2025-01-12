@@ -1,5 +1,7 @@
+import { CLIENT_URI } from "../constants/getEnv";
 import { CONFLICT, NOT_FOUND, UNAUTHORIZED } from "../constants/http";
 import VerifyCationType from "../constants/verificationCodeType";
+import { sendVerificationEmail } from "../mailer/mail";
 import Session from "../models/session.model";
 import User from "../models/user.model";
 import VerifyCationCode from "../models/verificationCode.model";
@@ -43,6 +45,11 @@ export const createUser = async (data: createUserData) => {
     expiresAt: oneYearFromNow(),
   });
 
+
+  //send verification email
+  const url =`${CLIENT_URI}/email-verify/${verificationCode._id}`
+  sendVerificationEmail(user.email, url )
+
   //send verification email
   const session = await Session.create({
     userId,
@@ -52,6 +59,8 @@ export const createUser = async (data: createUserData) => {
   const sessionInfo = {
     sessionId: session._id,
   };
+
+
 
   const refreshToken = signToken(sessionInfo, refreshTokenSignOptions);
 
