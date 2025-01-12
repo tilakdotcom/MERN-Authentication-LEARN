@@ -4,12 +4,16 @@ import "./index.css";
 import App from "./App.tsx";
 import { ToastContainer } from "react-toastify";
 import { BrowserRouter } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryClient from "./config/queryClient.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-      <ToastContainer />
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <App />
+        <ToastContainer />
+      </BrowserRouter>
+    </QueryClientProvider>
   </StrictMode>
 );
