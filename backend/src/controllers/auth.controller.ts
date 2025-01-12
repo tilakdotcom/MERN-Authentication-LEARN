@@ -1,8 +1,8 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware";
 import { CREATED ,OK, UNAUTHORIZED} from "../constants/http";
-import { createUser, loginUser, refreshUserAccessToken, sendPasswordEmail, verifyEmail } from "../servies/auth.services";
+import { createUser, loginUser, refreshUserAccessToken, resetPassword, sendPasswordEmail, verifyEmail } from "../servies/auth.services";
 import { clearAuthCookie, getRefreshTokenCookiesOptions, setAuthCookies } from "../utils/cookies";
-import { emailschema, loginSchema, registerSchema, verificationCodeSchema } from "./auth.schema";
+import { emailschema, loginSchema, registerSchema, resetPasswordSchema, verificationCodeSchema } from "./auth.schema";
 import { verifyToken } from "../utils/tokenHelper";
 import Session from "../models/session.model";
 import appAssert from "../utils/appAssert";
@@ -93,3 +93,14 @@ export const sendPasswordEmailHandler = asyncHandler(async (req, res)=>{
   })
 })
 
+export const resetPasswordHandler = asyncHandler(async (req, res) => {
+  const body = resetPasswordSchema.parse({
+    ...req.body,
+  })
+  await resetPassword(body)
+  
+  
+  return clearAuthCookie(res).status(OK).json({
+    message: "Password reset successful",
+  })
+})

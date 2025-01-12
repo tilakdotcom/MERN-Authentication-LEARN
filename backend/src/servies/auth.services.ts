@@ -12,6 +12,7 @@ import Session from "../models/session.model";
 import User from "../models/user.model";
 import VerifyCationCode from "../models/verificationCode.model";
 import appAssert from "../utils/appAssert";
+import { passwordHasher } from "../utils/bcrypt";
 import {
   fineMinutesAgo,
   oneDayInMS,
@@ -205,11 +206,41 @@ export const sendPasswordEmail = async (email: string) => {
     verificationCode._id
   }&exp=${expiresAt.getTime()}`;
 
-  const mail = sendResetPassword(user.email,url);
-  appAssert(mail, INTERNAL_SERVER_ERROR, "Could not send reset password email")
+  const mail = sendResetPassword(user.email, url);
+  appAssert(mail, INTERNAL_SERVER_ERROR, "Could not send reset password email");
 
   return {
     url,
-    user
-  }
+    user,
+  };
+};
+
+type TResetPassword = {
+  password: string;
+  code: string;
+};
+
+export const resetPassword = async ({ code, password }: TResetPassword) => {
+  const validCode = await VerifyCationCode.findOne({
+    _id: code,
+    type: VerifyCationType.RESET_PASSWORD,
+    expiresAt: { $gt: new Date() },
+  });
+  appAssert(validCode, UNAUTHORIZED, "Invalid verification code");
+  const hashedPassword = await passwordHasher(password);
+  const user = await User.findByIdAndUpdate(
+    validCode.userId,
+    { $set: { password: hashedPassword } },
+    { new: true }
+  ).select("-password");
+  appAssert(user, NOT_FOUND, "User not found");
+
+  await validCode.deleteOne();
+  await Session.deleteMany({
+    userId: user._id,
+  });
+
+  return {
+    user,
+  };
 };

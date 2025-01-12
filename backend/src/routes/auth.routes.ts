@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginHandler, logoutHandler, refreshHandler, registerHandler, sendPasswordEmailHandler, verifyEmailHandler } from "../controllers/auth.controller";
+import { loginHandler, logoutHandler, refreshHandler, registerHandler, resetPasswordHandler, sendPasswordEmailHandler, verifyEmailHandler } from "../controllers/auth.controller";
 // import verifyUser from "../middlewares/verifyUser.middleware";
 
 
@@ -17,5 +17,7 @@ router.route("/refresh").get(refreshHandler,)
 router.route("/verify-email/:code").get(verifyEmailHandler)
 
 router.route("/forgot-password").get(sendPasswordEmailHandler)
+
+router.route("/reset-password").patch(resetPasswordHandler)
 
 export default router
