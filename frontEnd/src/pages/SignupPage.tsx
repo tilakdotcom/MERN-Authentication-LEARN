@@ -15,7 +15,6 @@ import { z } from "zod";
 // import { errorToast, successToast } from "@/lib/toast";
 import { signupSchma } from "@/schemas/signupSchema";
 import { useState } from "react";
-import { console } from "inspector";
 
 export default function SignupPage() {
   const [loading, setLoading] = useState<boolean>(false);
