@@ -11,4 +11,14 @@ const API: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
+
+API.interceptors.response.use(
+  response => response.data,
+  error => {
+    const { status, data } = error.response;
+    return Promise.reject({ status, ...data });
+  }
+)
+
+
 export default API;

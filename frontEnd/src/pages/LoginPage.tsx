@@ -13,11 +13,28 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 // import { errorToast, successToast } from "@/lib/toast";
 import { LoginSchma } from "@/schemas/loginSchema";
-import { useState } from "react";
-
+import { useMutation } from "@tanstack/react-query";
+import { loginRequest } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
+import { errorToast } from "@/lib/toast";
 
 export default function LoginPage() {
-  const [loading, setLoading] = useState<boolean>(false);
+  const naviagte = useNavigate();
+
+  const {
+    mutate: Login,
+    isPending,
+    isError,
+  } = useMutation({
+    mutationFn: loginRequest,
+    onSuccess: () => {
+      naviagte("/", { replace: true });
+    },
+  });
+
+  if (isError) {
+    errorToast("Invalid credentials or password");
+  }
   const form = useForm<z.infer<typeof LoginSchma>>({
     resolver: zodResolver(LoginSchma),
     defaultValues: {
@@ -27,8 +44,7 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: z.infer<typeof LoginSchma>) {
-    console.log(values)
-    setLoading(true);
+    Login(values);
   }
 
   return (
@@ -57,6 +73,7 @@ export default function LoginPage() {
                       className="w-full px-4 py-2 rounded-md bg-green-900 text-gray-100 border border-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none md:text-base"
                       placeholder="Enter your email"
                       {...field}
+                      autoComplete="email"
                     />
                   </FormControl>
                   <FormMessage />
@@ -77,6 +94,7 @@ export default function LoginPage() {
                       type="password"
                       className="w-full px-4 py-2 rounded-md bg-green-900 text-gray-100 border border-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none md:text-base"
                       placeholder="Enter your password"
+                      autoComplete="current-password"
                       {...field}
                     />
                   </FormControl>
@@ -88,12 +106,12 @@ export default function LoginPage() {
             <div className="py-2 md:py-4">
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={isPending}
                 className={`w-full py-2 px-4 bg-green-400 hover:bg-green-500 text-white rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200 ease-linear ${
-                  loading ? " cursor-not-allowed bg-green-300" : ""
+                  isPending ? " cursor-not-allowed bg-green-300" : ""
                 }`}
               >
-                {loading ? "Wait" : "Login"}
+                {isPending ? "Wait" : "Login"}
               </Button>
             </div>
           </form>
