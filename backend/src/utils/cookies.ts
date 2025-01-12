@@ -7,7 +7,7 @@ type SetAuthParams = {
   refreshToken: string;
 };
 
-export const  REFRESH_PATH = "/auth/refresh"
+export const  REFRESH_PATH = "/api/v1/auth/refresh"
 const defaultCookies: CookieOptions = {
   httpOnly: true,
   sameSite: "strict",

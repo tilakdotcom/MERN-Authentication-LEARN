@@ -53,7 +53,7 @@ export const logoutHandler = asyncHandler(async (req, res) => {
 
 export const refreshHandler = asyncHandler(async (req, res) => {
   const refreshToken = req.cookies.refreshToken as string || undefined;
-  appAssert(refreshHandler, UNAUTHORIZED, "Refresh token not valid or expired")
+  appAssert(refreshToken, UNAUTHORIZED, "Refresh token not valid or expired")
   
   const {accessToken, newRefreshToken} =  await refreshUserAccessToken(refreshToken || "")
 
