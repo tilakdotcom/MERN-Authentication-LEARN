@@ -11,12 +11,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-// import { errorToast, successToast } from "@/lib/toast";
 import { LoginSchma } from "@/schemas/loginSchema";
 import { useMutation } from "@tanstack/react-query";
 import { loginRequest } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
-import { errorToast } from "@/lib/toast";
+import { errorToast, successToast } from "@/lib/toast";
 
 export default function LoginPage() {
   const naviagte = useNavigate();
@@ -25,15 +24,17 @@ export default function LoginPage() {
     mutate: Login,
     isPending,
     isError,
+    error
   } = useMutation({
     mutationFn: loginRequest,
     onSuccess: () => {
       naviagte("/", { replace: true });
+      successToast("Login Successful");
     },
   });
 
   if (isError) {
-    errorToast("Invalid credentials or password");
+    errorToast( error?.message||"Invalid credentials or password");
   }
   const form = useForm<z.infer<typeof LoginSchma>>({
     resolver: zodResolver(LoginSchma),

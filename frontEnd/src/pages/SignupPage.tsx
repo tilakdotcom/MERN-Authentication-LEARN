@@ -12,12 +12,32 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-// import { errorToast, successToast } from "@/lib/toast";
+import { errorToast, successToast } from "@/lib/toast";
 import { signupSchma } from "@/schemas/signupSchema";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { signupRequest } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
-  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  const {
+    mutate: SignUp,
+    isError,
+    isPending,
+    error,
+  } = useMutation({
+    mutationFn: signupRequest,
+    onSuccess: () => {
+      successToast("Signup successful!");
+      navigate("/login", { replace: true });
+    },
+  });
+
+  if (isError) {
+    errorToast(error?.message || "Signup Failed!");
+  }
+
   const form = useForm<z.infer<typeof signupSchma>>({
     resolver: zodResolver(signupSchma),
     defaultValues: {
@@ -27,8 +47,7 @@ export default function SignupPage() {
   });
 
   async function onSubmit(values: z.infer<typeof signupSchma>) {
-    setLoading(true);
-    console.log(values);
+    SignUp(values);
   }
   return (
     <div className="lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
@@ -85,12 +104,12 @@ export default function SignupPage() {
             <div className="py-2 md:py-4">
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={isPending}
                 className={`w-full py-2 px-4 bg-green-400 hover:bg-green-500 text-white rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200 ease-linear ${
-                  loading ? " cursor-not-allowed bg-green-300" : ""
+                  isPending ? " cursor-not-allowed bg-green-300" : ""
                 }`}
               >
-                {loading ? "Wait" : "Sign Up"}
+                {isPending ? "Wait" : "Sign Up"}
               </Button>
             </div>
           </form>
