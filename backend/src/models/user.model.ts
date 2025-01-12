@@ -4,6 +4,7 @@ import { passwordCompare, passwordHasher } from "../utils/bcrypt";
 export interface userDocument extends Document {
   email: string;
   password: string;
+  emailVerified: boolean;
   userAgent?: string;
   comparePassword: (password: string) => Promise<boolean>;
 }
@@ -22,6 +23,10 @@ const userSchema = new Schema<userDocument>(
     },
     userAgent: {
       type: "string",
+    },
+    emailVerified: {
+      type: "boolean",
+      default: false,
     },
   },
   {

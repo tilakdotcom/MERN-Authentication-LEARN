@@ -1,4 +1,4 @@
-import { CONFLICT, UNAUTHORIZED } from "../constants/http";
+import { CONFLICT, NOT_FOUND, UNAUTHORIZED } from "../constants/http";
 import VerifyCationType from "../constants/verificationCodeType";
 import Session from "../models/session.model";
 import User from "../models/user.model";
@@ -143,3 +143,26 @@ export const refreshUserAccessToken = async (refreshToken: string) => {
     newRefreshToken,
   };
 };
+
+
+export const verifyEmail =async(code:string) =>{
+
+  const validCode = await VerifyCationCode.findOne({
+    _id: code,
+    type: VerifyCationType.VERIFY_EMAIL,
+    expiresAt: { $gt: new Date() }
+  })
+  appAssert(validCode, UNAUTHORIZED, "Invalid verification code");
+
+  const user = await User.findByIdAndUpdate(
+    validCode.userId,
+    { $set: { emailVerified: true } },
+    { new: true }
+  ).select("-password");
+  
+  appAssert(user, NOT_FOUND, "User not found");
+
+  await validCode.deleteOne()
+
+  return {user}
+}

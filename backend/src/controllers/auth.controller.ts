@@ -1,8 +1,8 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware";
 import { CREATED ,OK, UNAUTHORIZED} from "../constants/http";
-import { createUser, loginUser, refreshUserAccessToken } from "../servies/auth.services";
+import { createUser, loginUser, refreshUserAccessToken, verifyEmail } from "../servies/auth.services";
 import { clearAuthCookie, getRefreshTokenCookiesOptions, setAuthCookies } from "../utils/cookies";
-import { loginSchema, registerSchema } from "./auth.schema";
+import { loginSchema, registerSchema, verificationCodeSchema } from "./auth.schema";
 import { verifyToken } from "../utils/tokenHelper";
 import Session from "../models/session.model";
 import appAssert from "../utils/appAssert";
@@ -66,6 +66,19 @@ export const refreshHandler = asyncHandler(async (req, res) => {
   .cookie("accessToken", accessToken, getRefreshTokenCookiesOptions())
   .json({
     message : "Access Token was successfully  refreshed"
+  })
+})
+
+export const verifyEmailHandler = asyncHandler(async (req, res) => {
+  const verificationCode = verificationCodeSchema.parse(req.params.code) 
+
+  const {user} =await verifyEmail(verificationCode)
+
+  return res
+ .status(OK)
+ .json({
+    message : "Email verification successful",
+    data: user
   })
 })
 
