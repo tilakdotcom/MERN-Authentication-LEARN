@@ -4,7 +4,6 @@ import VerifyCationType from "../constants/verificationCodeType";
 interface VerifyCationCodeDocument extends Document {
   userId: mongoose.Types.ObjectId;
   type: VerifyCationType;
-  code: string;
   expiresAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -18,10 +17,6 @@ const VerifyCationCodeSchema = new Schema(
       index: true,
     },
     type: {
-      type: String,
-      required: true,
-    },
-    code: {
       type: String,
       required: true,
     },

@@ -1,8 +1,8 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware";
 import { CREATED ,OK, UNAUTHORIZED} from "../constants/http";
-import { createUser, loginUser, refreshUserAccessToken, verifyEmail } from "../servies/auth.services";
+import { createUser, loginUser, refreshUserAccessToken, sendPasswordEmail, verifyEmail } from "../servies/auth.services";
 import { clearAuthCookie, getRefreshTokenCookiesOptions, setAuthCookies } from "../utils/cookies";
-import { loginSchema, registerSchema, verificationCodeSchema } from "./auth.schema";
+import { emailschema, loginSchema, registerSchema, verificationCodeSchema } from "./auth.schema";
 import { verifyToken } from "../utils/tokenHelper";
 import Session from "../models/session.model";
 import appAssert from "../utils/appAssert";
@@ -82,4 +82,14 @@ export const verifyEmailHandler = asyncHandler(async (req, res) => {
   })
 })
 
+
+export const sendPasswordEmailHandler = asyncHandler(async (req, res)=>{
+  const email = emailschema.parse(req.body.email)
+  await sendPasswordEmail(email)
+
+
+  return res.status(OK).json({
+    message : "password reset link has been sent to your email"
+  })
+})
 

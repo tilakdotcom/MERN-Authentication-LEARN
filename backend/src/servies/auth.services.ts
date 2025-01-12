@@ -1,13 +1,21 @@
 import { CLIENT_URI } from "../constants/getEnv";
-import { CONFLICT, NOT_FOUND, UNAUTHORIZED } from "../constants/http";
+import {
+  CONFLICT,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  TOO_MANY_REQUESTS,
+  UNAUTHORIZED,
+} from "../constants/http";
 import VerifyCationType from "../constants/verificationCodeType";
-import { sendVerificationEmail } from "../mailer/mail";
+import { sendResetPassword, sendVerificationEmail } from "../mailers/mail";
 import Session from "../models/session.model";
 import User from "../models/user.model";
 import VerifyCationCode from "../models/verificationCode.model";
 import appAssert from "../utils/appAssert";
 import {
+  fineMinutesAgo,
   oneDayInMS,
+  oneHourFromNow,
   oneYearFromNow,
   thirtyDaysFromNow,
 } from "../utils/date-time";
@@ -40,15 +48,13 @@ export const createUser = async (data: createUserData) => {
 
   const verificationCode = await VerifyCationCode.create({
     userId,
-    code: "123213",
     type: VerifyCationType.VERIFY_EMAIL,
     expiresAt: oneYearFromNow(),
   });
 
-
   //send verification email
-  const url =`${CLIENT_URI}/email-verify/${verificationCode._id}`
-  sendVerificationEmail(user.email, url )
+  const url = `${CLIENT_URI}/email-verify/${verificationCode._id}`;
+  sendVerificationEmail(user.email, url);
 
   //send verification email
   const session = await Session.create({
@@ -59,8 +65,6 @@ export const createUser = async (data: createUserData) => {
   const sessionInfo = {
     sessionId: session._id,
   };
-
-
 
   const refreshToken = signToken(sessionInfo, refreshTokenSignOptions);
 
@@ -153,14 +157,12 @@ export const refreshUserAccessToken = async (refreshToken: string) => {
   };
 };
 
-
-export const verifyEmail =async(code:string) =>{
-
+export const verifyEmail = async (code: string) => {
   const validCode = await VerifyCationCode.findOne({
     _id: code,
     type: VerifyCationType.VERIFY_EMAIL,
-    expiresAt: { $gt: new Date() }
-  })
+    expiresAt: { $gt: new Date() },
+  });
   appAssert(validCode, UNAUTHORIZED, "Invalid verification code");
 
   const user = await User.findByIdAndUpdate(
@@ -168,10 +170,46 @@ export const verifyEmail =async(code:string) =>{
     { $set: { emailVerified: true } },
     { new: true }
   ).select("-password");
-  
+
   appAssert(user, NOT_FOUND, "User not found");
 
-  await validCode.deleteOne()
+  await validCode.deleteOne();
 
-  return {user}
-}
+  return { user };
+};
+
+export const sendPasswordEmail = async (email: string) => {
+  const user = await User.findOne({ email });
+  appAssert(user, NOT_FOUND, "User not found");
+
+  const count = await VerifyCationCode.countDocuments({
+    userId: user._id,
+    type: VerifyCationType.RESET_PASSWORD,
+    createdAt: { $gt: fineMinutesAgo() },
+  });
+
+  appAssert(
+    count < 2,
+    TOO_MANY_REQUESTS,
+    "Too many requests received for reset password"
+  );
+
+  const expiresAt = oneHourFromNow();
+  const verificationCode = await VerifyCationCode.create({
+    userId: user._id,
+    type: VerifyCationType.RESET_PASSWORD,
+    expiresAt,
+  });
+
+  const url = `${CLIENT_URI}/password-reset?code=${
+    verificationCode._id
+  }&exp=${expiresAt.getTime()}`;
+
+  const mail = sendResetPassword(user.email,url);
+  appAssert(mail, INTERNAL_SERVER_ERROR, "Could not send reset password email")
+
+  return {
+    url,
+    user
+  }
+};
