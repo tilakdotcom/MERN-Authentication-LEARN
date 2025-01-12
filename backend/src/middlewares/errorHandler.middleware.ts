@@ -25,7 +25,6 @@ const handleApiError = (res: Response, error: ApiError) => {
 
 const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
   console.log(`Error occured PATH: ${req.path}`, error);
-
   if (req.path === REFRESH_PATH) {
     clearAuthCookie(res);
   }

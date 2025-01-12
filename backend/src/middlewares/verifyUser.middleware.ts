@@ -1,45 +1,44 @@
-// import jwt from "jsonwebtoken";
-// import User from "../models/user.model";
-// import { NextFunction, Request, Response } from "express";
-// import asyncHandler from "./asyncHandler.middleware";
-// import appAssert from "../utils/appAssert";
-// import { UNAUTHORIZED } from "../constants/http";
-// import { ACCESS_TOKEN_SECRET } from "../constants/getEnv";
-// import { verifyToken } from "../utils/tokenHelper";
+import { NextFunction, Request, Response } from "express";
+import asyncHandler from "./asyncHandler.middleware";
+import appAssert from "../utils/appAssert";
+import { UNAUTHORIZED } from "../constants/http";
+import { verifyToken } from "../utils/tokenHelper";
+import ApiErrorCode from "../constants/appErroCode";
 
-// // Extend Request to include `user`
-// declare global {
-//   namespace Express {
-//     interface Request {
-//       payload?: Record<string, any>;
-//     }
-//   }
-// }
+const verifyUser = asyncHandler(
+  async (req: Request, _res: Response, next: NextFunction) => {
+    try {
+      const token =
+        req.cookies.accessToken ||
+        (req.header("Authorization")?.replace("Bearer ", "") as string);
 
-// const verifyUser = asyncHandler(
-//   async (req: Request, _res: Response, next: NextFunction) => {
-//     try {
-//       const token =
-//         req.cookies?.accessToken ||
-//         req.header("Authorization")?.replace("Bearer ", "");
+      // validate token
+      appAssert(
+        token,
+        UNAUTHORIZED,
+        "Not authorized, token is required",
+        ApiErrorCode.INVALID_ACCCESS_TOKEN
+      );
 
-//       // validate token
-//       appAssert(token, UNAUTHORIZED, "Not authorized, token is required");
+      //token decode
+      const { payload, error } = verifyToken(token);
 
-//       //token decode
-//       const {decode} = verifyToken(token)
+      appAssert(
+        payload,
+        UNAUTHORIZED,
+        error === "jwt expired"
+          ? "token is Expired"
+          : "Not authorized, payload is required",
+        ApiErrorCode.INVALID_ACCCESS_TOKEN
+      );
+      req.userId = payload.userId;
+      req.sessionId = payload.sessionId;
+      next();
+    } catch (error) {
+      console.log("Error in Middleware", error);
+      next(error);
+    }
+  }
+);
 
-//       const user = await User.findById(decode?.userId).select("-password");
-
-//       appAssert(user, UNAUTHORIZED, "Not authorized, token is required");
-
-//       req.payload = user;
-//       next();
-//     } catch (error) {
-//       console.log("Error in Middleware", error);
-//       next(error);
-//     }
-//   }
-// );
-
-// export default verifyUser;
+export default verifyUser;
