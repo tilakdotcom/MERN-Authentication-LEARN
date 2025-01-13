@@ -11,29 +11,55 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { useState } from "react";
-// import { errorToast, successToast } from "@/lib/toast";
 import { passwordSchema } from "@/schemas/passwordSchma";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { resetPasswordRequest } from "@/lib/api";
+import { errorToast, successToast } from "@/lib/toast";
 
 export default function VerifyAndPasswordPage() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const params = useParams();
+  const [searchParams] = useSearchParams();
+  const code = searchParams.get('code');
+  const exp = searchParams.get("exp");
+
+  if (!code || !exp) {
+    console.log("not valid link");
+  }
+
+  const {
+    mutate: resetPassword,
+    isPending,
+    isError,
+  } = useMutation({
+    mutationFn: resetPasswordRequest,
+    onSuccess: ()=>{
+      successToast("Password reset Successfully")
+    }
+  })
+
   const form = useForm<z.infer<typeof passwordSchema>>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
       password: "",
     },
   });
-
-  const { token } = params;
-  if (!token) {
-    console.log("Please enter a valid token to verify your password");
-  }
+const now = Date.now();
 
   async function onSubmit(values: z.infer<typeof passwordSchema>) {
-    setLoading(true);
+
+    if(Number.parseInt(exp || "0") < now){
+      errorToast("Link expired");
+      return;
+    }
+
+    resetPassword({
+      code: code || "",
+      password: values.password,
+    })
     console.log(values.password);
+  }
+  if(isError){
+    errorToast("Link expired or Invalid link");
   }
   return (
     <div className=" min-h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
@@ -72,12 +98,12 @@ export default function VerifyAndPasswordPage() {
             <div className="py-2 md:py-4">
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={isPending}
                 className={`w-full py-2 px-4 bg-green-400 hover:bg-green-500 text-white rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200 ease-linear ${
-                  loading ? " cursor-not-allowed bg-green-300" : ""
+                  isPending ? " cursor-not-allowed bg-green-300" : ""
                 }`}
               >
-                {loading ? "Wait" : "Reset Password"}
+                {isPending ? "Wait" : "Reset Password"}
               </Button>
             </div>
           </form>

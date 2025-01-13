@@ -7,3 +7,8 @@ export type SignupData = {
   email: string;
   password: string;
 }
+
+export type ResetPasswordData ={
+  password: string;
+  code: string;
+}

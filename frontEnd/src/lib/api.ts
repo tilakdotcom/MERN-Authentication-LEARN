@@ -1,5 +1,9 @@
 import API from "@/config/axiousInstance";
-import { LoginData, SignupData } from "@/types/apiRequestTypes";
+import {
+  LoginData,
+  ResetPasswordData,
+  SignupData,
+} from "@/types/apiRequestTypes";
 
 export const loginRequest = async (data: LoginData) => {
   return API.post("/auth/login", data);
@@ -15,4 +19,8 @@ export const verifyEmailRequest = async (code: string) => {
 
 export const forgotPasswordRequest = async (email: string) => {
   return API.post("/auth/forgot-password", { email });
+};
+
+export const resetPasswordRequest = async (data: ResetPasswordData) => {
+  return API.patch("/auth/reset-password", data);
 };
