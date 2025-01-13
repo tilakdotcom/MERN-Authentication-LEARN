@@ -29,3 +29,7 @@ export const resetPasswordRequest = async (data: ResetPasswordData) => {
 export const userRequest = ()=>{
   return API.get("/user")
 }
+
+export const logoutRequest =()=>{
+  return API.post("/auth/logout")
+}

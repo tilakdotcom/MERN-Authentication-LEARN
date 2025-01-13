@@ -27,7 +27,7 @@ export default function LoginPage() {
   } = useMutation({
     mutationFn: loginRequest,
     onSuccess: () => {
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
       successToast("Login Successful");
     },
   });

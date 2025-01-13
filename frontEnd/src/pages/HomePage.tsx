@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const HomePage: React.FC = () => {
-  const auth = true
+  const auth = true;
   return (
     <div className="min-h-screen bg-green-50 flex flex-col items-center justify-center px-6 md:px-12">
       <div className="bg-green-100 p-8 md:p-16 rounded-lg shadow-lg text-center max-w-2xl">
@@ -57,7 +57,6 @@ const HomePage: React.FC = () => {
               </Link>
             </>
           )}
-        
         </div>
       </div>
     </div>
