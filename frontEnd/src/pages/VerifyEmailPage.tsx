@@ -1,82 +1,66 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { useState } from "react";
-// import { errorToast, successToast } from "@/lib/toast";
-import { verifyTokenSchema } from "@/schemas/verifyTokenSchema";
+import { verifyEmailRequest } from "@/lib/api";
+import { errorToast, successToast } from "@/lib/toast";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function VerifyEmailPage() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const form = useForm<z.infer<typeof verifyTokenSchema>>({
-    resolver: zodResolver(verifyTokenSchema),
-    defaultValues: {
-      token: "",
+const VerifyEmailPage = () => {
+  const naviagte = useNavigate();
+  const { code } = useParams();
+  console.log("code", code);
+
+  const {
+    mutate: verifyEmail,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: verifyEmailRequest,
+    onSuccess: () => {
+      naviagte("/", { replace: true });
+      successToast("verified successfully ");
     },
   });
 
-  async function onSubmit(values: z.infer<typeof verifyTokenSchema>) {
-    setLoading(true);
-    console.log(values)
+  if (isError) {
+    errorToast(error?.message || "Link failed to verify email"); 
   }
+  if (!code) {
+    errorToast("Invalid verification code");
+    return;
+  }
+
+  const handleOnVerifyButton = async () => {
+    verifyEmail(code);
+    console.log("verified");
+  };
   return (
-    <div className="h-full lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
-      <div className="flex justify-center items-center">
-      <Form {...form}>
-        <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full bg-green-800 p-8 rounded-lg shadow-md md:space-y-3 space-y-2 h-auto"
-        >
-        <h2 className="text-2xl font-bold text-center text-white ">
-           VerifyEmail
+    <div className=" min-h-screen bg-green-50 flex items-center justify-center">
+      <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
+        <h2 className="text-2xl font-bold text-green-600 text-center mb-4">
+          Verify Your Email
         </h2>
-        <p className="text-center text-gray-200">
-          Please enter the code sent to your email
+        <p className="text-gray-600 text-center mb-6">
+          Please verify your email to activate your account. We have sent a
+          verification link to your email address. Click the button below once
+          you have verified your email.
         </p>
-  
-        <FormField
-          control={form.control}
-          name="token"
-          render={({ field }) => (
-          <FormItem>
-            <FormLabel className="block md:text-base font-medium text-gray-100 ">
-            Code
-            </FormLabel>
-            <FormControl>
-            <Input
-              className="w-full px-4 py-2 rounded-md bg-green-900 text-gray-100 border border-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none md:text-base "
-              placeholder="Enter your Code "
-              {...field}
-              maxLength={6}
-            />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-          )}
-        />
-        <div className="py-2 md:py-4">
-          <Button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-2 px-4 bg-green-400 hover:bg-green-500 text-white rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200 ease-linear ${
-            loading ? " cursor-not-allowed bg-green-300" : ""
-          }`}
-          >
-          {loading ? "Wait" : "Verify"}
-          </Button>
-        </div>
-        </form>
-      </Form>
+        <button
+          disabled={isPending}
+          onClick={handleOnVerifyButton}
+          className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded w-full"
+        >
+          Verify Your Account
+        </button>
+        <p className="text-gray-500 text-sm text-center mt-6">
+          Didn't receive the email?{" "}
+          <span className="text-green-600 cursor-pointer hover:underline">
+            Resend verification email
+          </span>
+          .
+        </p>
       </div>
     </div>
   );
-}
+};
+
+export default VerifyEmailPage;

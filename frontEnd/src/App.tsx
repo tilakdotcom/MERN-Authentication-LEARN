@@ -12,11 +12,11 @@ export default function App() {
   return <>
   <Routes>
     <Route path="/" element={<Layout />}>
-      <Route element={<HomePage />} />
+      <Route path="/" element={<HomePage />} />
       <Route path="login" element={<LoginPage />} />
       <Route path="signup" element={<SignupPage />} />
       <Route path="dashboard" element={<Dashboard />} />
-      <Route path="verify-email" element={<VerifyEmailPage />} />
+      <Route path="email-verify/:code" element={<VerifyEmailPage />} />
       <Route path="reset-password-link" element={<ResetPasswordLinkPage />} />
       <Route path="verify-and-password/:token" element={<VerifyAndPasswordPage />} />
     </Route>

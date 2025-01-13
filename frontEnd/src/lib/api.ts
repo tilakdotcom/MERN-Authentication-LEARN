@@ -9,3 +9,7 @@ export const loginRequest  = async (data : LoginData) => {
 export const signupRequest = async (data : SignupData) => {
   return API.post("/auth/register", data)
 }
+
+export const verifyEmailRequest = async (code : string) => {
+  return API.get(`/auth/verify-email/${code}`)
+}

@@ -14,28 +14,24 @@ import { z } from "zod";
 import { LoginSchma } from "@/schemas/loginSchema";
 import { useMutation } from "@tanstack/react-query";
 import { loginRequest } from "@/lib/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { errorToast, successToast } from "@/lib/toast";
 
 export default function LoginPage() {
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
 
   const {
     mutate: Login,
     isPending,
     isError,
-    error
   } = useMutation({
     mutationFn: loginRequest,
     onSuccess: () => {
-      naviagte("/", { replace: true });
+      navigate("/", { replace: true });
       successToast("Login Successful");
     },
   });
 
-  if (isError) {
-    errorToast( error?.message||"Invalid credentials or password");
-  }
   const form = useForm<z.infer<typeof LoginSchma>>({
     resolver: zodResolver(LoginSchma),
     defaultValues: {
@@ -47,18 +43,18 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof LoginSchma>) {
     Login(values);
   }
-
+  if (isError) {
+    errorToast("Invalid credentials or password");
+  }
   return (
-    <div className="h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
+    <div className="screen-h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto bg-gray-100">
       <div className="flex justify-center items-center md:w-1/3">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full bg-green-800 p-8 rounded-lg shadow-md md:space-y-3 space-y-2 h-auto"
+            className="w-full bg-teal-800 p-8 rounded-lg shadow-md md:space-y-3 space-y-2 h-auto"
           >
-            <h2 className="text-2xl font-bold text-center text-white ">
-              Login
-            </h2>
+            <h2 className="text-2xl font-bold text-center text-white">Login</h2>
             <p className="text-center text-gray-200">Login to your account</p>
 
             <FormField
@@ -66,12 +62,12 @@ export default function LoginPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="block md:text-base font-medium text-gray-100 ">
+                  <FormLabel className="block md:text-base font-medium text-gray-100">
                     Email
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="w-full px-4 py-2 rounded-md bg-green-900 text-gray-100 border border-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none md:text-base"
+                      className="w-full px-4 py-2 rounded-md bg-teal-900 text-gray-100 border border-teal-700 focus:ring-2 focus:ring-teal-400 focus:outline-none md:text-base"
                       placeholder="Enter your email"
                       {...field}
                       autoComplete="email"
@@ -87,13 +83,13 @@ export default function LoginPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="block md:text-base font-medium text-gray-100 ">
+                  <FormLabel className="block md:text-base font-medium text-gray-100">
                     Password
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      className="w-full px-4 py-2 rounded-md bg-green-900 text-gray-100 border border-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none md:text-base"
+                      className="w-full px-4 py-2 rounded-md bg-teal-900 text-gray-100 border border-teal-700 focus:ring-2 focus:ring-teal-400 focus:outline-none md:text-base"
                       placeholder="Enter your password"
                       autoComplete="current-password"
                       {...field}
@@ -108,13 +104,23 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className={`w-full py-2 px-4 bg-green-400 hover:bg-green-500 text-white rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200 ease-linear ${
-                  isPending ? " cursor-not-allowed bg-green-300" : ""
+                className={`w-full py-2 px-4 bg-teal-400 hover:bg-teal-500 text-white rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all duration-200 ease-linear ${
+                  isPending ? " cursor-not-allowed bg-teal-300" : ""
                 }`}
               >
                 {isPending ? "Wait" : "Login"}
               </Button>
             </div>
+            <p className="text-gray-500 text-sm text-center mt-6">
+              Don't have an account?{" "}
+              <Link
+                to={"/signup"}
+                className="text-teal-600 cursor-pointer hover:underline"
+              >
+                Create a new one
+              </Link>
+              .
+            </p>
           </form>
         </Form>
       </div>
