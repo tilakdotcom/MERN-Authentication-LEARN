@@ -16,7 +16,7 @@ router.route("/refresh").get(refreshHandler,)
 
 router.route("/verify-email/:code").get(verifyEmailHandler)
 
-router.route("/forgot-password").get(sendPasswordEmailHandler)
+router.route("/forgot-password").post(sendPasswordEmailHandler)
 
 router.route("/reset-password").patch(resetPasswordHandler)
 

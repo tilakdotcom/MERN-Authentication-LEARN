@@ -29,7 +29,6 @@ export default function VerifyAndPasswordPage() {
   const { token } = params;
   if (!token) {
     console.log("Please enter a valid token to verify your password");
-    return;
   }
 
   async function onSubmit(values: z.infer<typeof passwordSchema>) {
@@ -37,7 +36,7 @@ export default function VerifyAndPasswordPage() {
     console.log(values.password);
   }
   return (
-    <div className="h-full lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
+    <div className=" min-h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
       <div className="flex justify-center items-center md:w-96">
         <Form {...form}>
           <form
@@ -78,7 +77,7 @@ export default function VerifyAndPasswordPage() {
                   loading ? " cursor-not-allowed bg-green-300" : ""
                 }`}
               >
-                {loading ? "Wait" : "Verify"}
+                {loading ? "Wait" : "Reset Password"}
               </Button>
             </div>
           </form>

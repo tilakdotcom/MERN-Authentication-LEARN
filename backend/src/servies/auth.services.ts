@@ -206,8 +206,7 @@ export const sendPasswordEmail = async (email: string) => {
     verificationCode._id
   }&exp=${expiresAt.getTime()}`;
 
-  const mail = sendResetPassword(user.email, url);
-  appAssert(mail, INTERNAL_SERVER_ERROR, "Could not send reset password email");
+ sendResetPassword(user.email, url);
 
   return {
     url,

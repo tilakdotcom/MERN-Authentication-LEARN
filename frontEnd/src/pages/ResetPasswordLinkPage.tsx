@@ -12,12 +12,28 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
-import { useState } from "react";
 // import { errorToast, successToast } from "@/lib/toast";
 import { resetEmailSchema } from "@/schemas/resetEmail";
+import { useMutation } from "@tanstack/react-query";
+import { errorToast, successToast } from "@/lib/toast";
+import { forgotPasswordRequest } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
 
 export default function ResetPasswordLinkPage() {
-  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate()
+
+  const {
+    mutate: SendResetPassword,
+    isPending,
+    isError,
+  } = useMutation({
+    mutationFn: forgotPasswordRequest,
+    onSuccess: () => {
+      navigate("/", { replace: true });
+      successToast("Reset password Link have been sent  successfully");
+    },
+  });
+
   const form = useForm<z.infer<typeof resetEmailSchema>>({
     resolver: zodResolver(resetEmailSchema),
     defaultValues: {
@@ -26,11 +42,14 @@ export default function ResetPasswordLinkPage() {
   });
 
   async function onSubmit(values: z.infer<typeof resetEmailSchema>) {
-    setLoading(true);
-    console.log(values);
+    SendResetPassword(values.email);
+  }
+
+  if(isError){
+    errorToast("Failed to reset password");
   }
   return (
-    <div className="h-full lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
+    <div className="min-h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto">
       <div className="flex justify-center items-center">
       <Form {...form}>
         <form
@@ -66,12 +85,12 @@ export default function ResetPasswordLinkPage() {
         <div className="py-2 md:py-4">
           <Button
           type="submit"
-          disabled={loading}
+          disabled={isPending}
           className={`w-full py-2 px-4 bg-green-400 hover:bg-green-500 text-white rounded-md font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200 ease-linear ${
-            loading ? " cursor-not-allowed bg-green-300" : ""
+            isPending ? " cursor-not-allowed bg-green-300" : ""
           }`}
           >
-          {loading ? "Wait" : "Get Link"}
+          {isPending ? "Wait" : "Get Link"}
           </Button>
         </div>
         </form>
