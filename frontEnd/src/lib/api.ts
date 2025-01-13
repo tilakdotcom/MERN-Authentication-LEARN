@@ -24,3 +24,8 @@ export const forgotPasswordRequest = async (email: string) => {
 export const resetPasswordRequest = async (data: ResetPasswordData) => {
   return API.patch("/auth/reset-password", data);
 };
+
+
+export const userRequest = ()=>{
+  return API.get("/user")
+}

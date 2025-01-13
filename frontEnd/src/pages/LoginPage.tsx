@@ -47,7 +47,7 @@ export default function LoginPage() {
     errorToast("Invalid credentials or password");
   }
   return (
-    <div className="screen-h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto bg-gray-100">
+    <div className="min-h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto bg-gray-100">
       <div className="flex justify-center items-center md:w-1/3">
         <Form {...form}>
           <form
