@@ -1,64 +1,61 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-const HomePage: React.FC = () => {
-  const auth = true;
+const HomePage = () => {
   return (
-    <div className="min-h-screen bg-green-50 flex flex-col items-center justify-center px-6 md:px-12">
-      <div className="bg-green-100 p-8 md:p-16 rounded-lg shadow-lg text-center max-w-2xl">
-        <h1 className="text-4xl font-bold text-green-800 mb-4">
-          Welcome to Our Authentication Platform!
-        </h1>
-        <p className="text-green-700 text-lg mb-6">
-          Enjoy a secure, reliable, and user-friendly authentication experience.
-          Whether you're here to log in, sign up, or explore, we've got you
-          covered.
-        </p>
-        <p className="text-green-600 mb-8">
-          Join our community today and take the first step towards secure
-          digital access. Our platform ensures your data remains safe while
-          providing an effortless user experience.
-        </p>
-        <div className="space-x-4">
-          {!auth ? (
-            <>
-              <Link
-                to={"/"}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all duration-300"
-              >
-                Home
-              </Link>{" "}
-              <Link
-                to={"/dashboard"}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all duration-300"
-              >
-                Dashboard
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to={"/login"}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all duration-300"
-              >
-                Log In
-              </Link>{" "}
-              <Link
-                to={"/signup"}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all duration-300"
-              >
-                Sign Up
-              </Link>
-              <Link
-                to={"/reset-password-link"}
-                className="px-6 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-all duration-300"
-              >
-                Forgot-password
-              </Link>
-            </>
-          )}
+    <div className="bg-gray-100 min-h-screen flex flex-col">
+      {/* Navbar */}
+      <nav className="bg-white shadow-md py-4">
+        <div className="container mx-auto px-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-blue-600">AuthApp</h1>
+          <div className="space-x-4">
+            <Link
+              to="/login"
+              className="text-gray-700 hover:text-blue-600 transition"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+            >
+              Sign Up
+            </Link>
+          </div>
         </div>
-      </div>
+      </nav>
+
+      {/* Hero Section */}
+      <header className="flex-grow flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white">
+        <div className="text-center px-4">
+          <h2 className="text-4xl md:text-6xl font-bold mb-4">
+            Welcome to AuthApp
+          </h2>
+          <p className="text-lg md:text-xl mb-6">
+            The simplest way to manage your authentication needs.
+          </p>
+          <div className="space-x-4">
+            <Link
+              to="/get-started"
+              className="bg-white text-blue-600 py-2 px-6 rounded-lg font-semibold hover:bg-gray-100 transition"
+            >
+              Get Started
+            </Link>
+            <Link
+              to="/learn-more"
+              className="bg-transparent border-2 border-white text-white py-2 px-6 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition"
+            >
+              Learn More
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Footer */}
+      <footer className="bg-white shadow-md py-4">
+        <div className="container mx-auto px-4 text-center text-gray-600">
+          <p>&copy; 2025 AuthApp. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };
