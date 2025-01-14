@@ -1,11 +1,11 @@
 import queryClient from "@/config/queryClient";
-import { useSesstions } from "@/hooks/useSesstions";
 import { deleteSessionRequest, logoutRequest } from "@/lib/api";
 import { errorToast, successToast } from "@/lib/toast";
 import { TSession } from "@/types/session";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useSessions from "@/hooks/useSesstions";
 
 export default function UserDashboard() {
   const [active, setActive] = useState("home");
@@ -73,8 +73,8 @@ const UserSection = () => {
 };
 
 const SessionsList = () => {
-  const { sessions } = useSesstions();
-  console.log("data", sessions)
+  const { sessions } = useSessions();
+
 
   const { mutate: deleteSession, isPending} = useMutation({
     mutationFn: deleteSessionRequest,
@@ -88,21 +88,23 @@ const SessionsList = () => {
       queryClient.refetchQueries();
     },
   });
+
+
   const handleOnDeleteSession = (id:string) => {
     deleteSession(id);
-  };
+  }
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Sessions</h2>
       { sessions.length > 0 ? (
         <ul className="divide-y divide-gray-200">
-          {data.map((session:TSession, index:number) => ( 
+          {sessions.map((session:TSession, index:number) => ( 
             <li key={index} className="py-4 flex justify-between items-center">
               <div>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-900">
                   {session.userAgent}
                 </p>
-                <p className="text-sm text-gray-500">{session.createdAt}</p>
+                <p className="text-sm text-gray-500">{new Date(session.createdAt).toLocaleString("en-US")}</p>
               </div>
               <div className="flex space-x-4">
                 <button
