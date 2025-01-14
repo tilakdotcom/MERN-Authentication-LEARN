@@ -6,7 +6,7 @@ import appAssert from "../utils/appAssert";
 
 
 export const  getUserHanler = asyncHandler(async (req, res)=>{
-  const user = await User.findById(req.userId);
+  const user = await User.findById(req.userId).select("-password");
 
   appAssert(user, NOT_FOUND, "User not found")
 

@@ -72,6 +72,7 @@ export default function SignupPage() {
                   </FormLabel>
                   <FormControl>
                     <Input
+                      autoComplete="current-email"
                       className="w-full px-4 py-2 rounded-md bg-green-900 text-green-100 border border-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none"
                       placeholder="Enter your email"
                       {...field}
@@ -93,6 +94,7 @@ export default function SignupPage() {
                   <FormControl>
                     <Input
                       type="password"
+                      autoComplete="current-password"
                       className="w-full px-4 py-2 rounded-md bg-green-900 text-green-100 border border-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none"
                       placeholder="Enter your password"
                       {...field}
@@ -102,7 +104,6 @@ export default function SignupPage() {
                 </FormItem>
               )}
             />
-
             <div className="pt-4">
               <Button
                 type="submit"
@@ -120,7 +121,7 @@ export default function SignupPage() {
                 to={"/login"}
                 className="text-teal-600 cursor-pointer hover:underline"
               >
-                Login with 
+                Login with
               </Link>
               .
             </p>

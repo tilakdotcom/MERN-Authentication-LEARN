@@ -5,6 +5,7 @@ import {
   SignupData,
 } from "@/types/apiRequestTypes";
 import { TSession } from "@/types/session";
+import { Data } from "@/types/user";
 
 export const loginRequest = async (data: LoginData) => {
   return API.post("/auth/login", data);
@@ -30,7 +31,7 @@ export const logoutRequest = () => {
   return API.post("/auth/logout");
 };
 
-export const userRequest = () => {
+export const userRequest = ():Promise<Data> => {
   return API.get("/user");
 };
 

@@ -17,10 +17,8 @@ import { resetEmailSchema } from "@/schemas/resetEmail";
 import { useMutation } from "@tanstack/react-query";
 import { errorToast, successToast } from "@/lib/toast";
 import { forgotPasswordRequest } from "@/lib/api";
-import { useNavigate } from "react-router-dom";
 
 export default function ResetPasswordLinkPage() {
-  const navigate = useNavigate()
 
   const {
     mutate: SendResetPassword,
@@ -29,7 +27,6 @@ export default function ResetPasswordLinkPage() {
   } = useMutation({
     mutationFn: forgotPasswordRequest,
     onSuccess: () => {
-      navigate("/", { replace: true });
       successToast("Reset password Link have been sent  successfully");
     },
   });

@@ -20,7 +20,7 @@ export default function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/email-verify/:code" element={<VerifyEmailPage />} />
         <Route
-          path="/reset-password-link"
+          path="/reset-password"
           element={<ResetPasswordLinkPage />}
         />
         <Route path="/password-reset" element={<VerifyAndPasswordPage />} />

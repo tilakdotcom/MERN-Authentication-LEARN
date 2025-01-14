@@ -99,7 +99,9 @@ export default function LoginPage() {
                 </FormItem>
               )}
             />
-
+            <div className="text-end px-1 hover:underline cursor-pointer text-xs font-bold text-white ">
+              <Link to={"/reset-password"}> Reset password</Link>
+            </div>
             <div className="py-2 md:py-4">
               <Button
                 type="submit"
