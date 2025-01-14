@@ -24,12 +24,11 @@ API.interceptors.response.use(
   async (error) => {
     const { response, config } = error;
     const { status, data } = response;
-    console.log("error response", response)
-    console.log("error data", data)
-    console.log("error status", error)
+    console.log("error data", config)
 
-    if (data.status === 401 && data.errorCode === "INVALID_ACCCESS_TOKEN") {
+    if (status === 401 && data.errorCode === "INVALID_ACCCESS_TOKEN") {
       try {
+        console.log("i am inside the wrong state ")
         await refreshToken.get("/auth/refresh");
         return refreshToken(config);
       } catch (error) {
