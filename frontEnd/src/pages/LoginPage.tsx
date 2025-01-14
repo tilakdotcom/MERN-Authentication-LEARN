@@ -23,13 +23,15 @@ export default function LoginPage() {
   const {
     mutate: Login,
     isPending,
-    isError,
   } = useMutation({
     mutationFn: loginRequest,
     onSuccess: () => {
       navigate("/dashboard", { replace: true });
       successToast("Login Successful");
     },
+    onError:()=>{
+      errorToast("invalid credentials")
+    }
   });
 
   const form = useForm<z.infer<typeof LoginSchma>>({
@@ -42,9 +44,6 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof LoginSchma>) {
     Login(values);
-  }
-  if (isError) {
-    errorToast("Invalid credentials or password");
   }
   return (
     <div className="min-h-screen lg:px-20 flex justify-center items-center px-10 py-5 my-auto bg-gray-100">
