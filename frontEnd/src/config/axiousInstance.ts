@@ -24,7 +24,6 @@ API.interceptors.response.use(
   async (error) => {
     const { response, config } = error;
     const { status, data } = response;
-    console.log("error data", config)
 
     if (status === 401 && data.errorCode === "INVALID_ACCCESS_TOKEN") {
       try {

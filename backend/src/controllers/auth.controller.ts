@@ -1,7 +1,7 @@
 import asyncHandler from "../middlewares/asyncHandler.middleware";
 import { CREATED ,OK, UNAUTHORIZED} from "../constants/http";
 import { createUser, loginUser, refreshUserAccessToken, resetPassword, sendPasswordEmail, verifyEmail } from "../servies/auth.services";
-import { clearAuthCookie, getRefreshTokenCookiesOptions, setAuthCookies } from "../utils/cookies";
+import { clearAuthCookie, getAccessTokenCookiesOptions, getRefreshTokenCookiesOptions, setAuthCookies } from "../utils/cookies";
 import { emailschema, loginSchema, registerSchema, resetPasswordSchema, verificationCodeSchema } from "./auth.schema";
 import { verifyToken } from "../utils/tokenHelper";
 import Session from "../models/session.model";
@@ -63,7 +63,7 @@ export const refreshHandler = asyncHandler(async (req, res) => {
 
   return res
   .status(OK)
-  .cookie("accessToken", accessToken, getRefreshTokenCookiesOptions())
+  .cookie("accessToken", accessToken, getAccessTokenCookiesOptions())
   .json({
     message : "Access Token was successfully  refreshed"
   })

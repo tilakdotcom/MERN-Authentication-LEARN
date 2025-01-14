@@ -2,7 +2,7 @@ import { userRequest } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 
-const AUTH = "auth";
+export const AUTH = "auth";
 
 export const useAuth = (opts? : object ) =>{
   const {
