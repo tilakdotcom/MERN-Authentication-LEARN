@@ -75,8 +75,7 @@ const UserSection = () => {
 const SessionsList = () => {
   const { sessions } = useSessions();
 
-
-  const { mutate: deleteSession, isPending} = useMutation({
+  const { mutate: deleteSession, isPending } = useMutation({
     mutationFn: deleteSessionRequest,
     onSuccess: () => {
       successToast("Session deleted successfully");
@@ -89,34 +88,44 @@ const SessionsList = () => {
     },
   });
 
+  console.log(sessions);
 
-  const handleOnDeleteSession = (id:string) => {
+  const handleOnDeleteSession = (id: string) => {
     deleteSession(id);
-  }
+  };
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Sessions</h2>
-      { sessions.length > 0 ? (
+      {sessions.length > 0 ? (
         <ul className="divide-y divide-gray-200">
-          {sessions.map((session:TSession, index:number) => ( 
-            <li key={index} className="py-4 flex justify-between items-center">
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {session.userAgent}
-                </p>
-                <p className="text-sm text-gray-500">{new Date(session.createdAt).toLocaleString("en-US")}</p>
-              </div>
-              <div className="flex space-x-4">
-                <button
-                disabled={isPending}
-                  className="text-red-600 hover:text-red-800 transition"
-                  onClick={() => handleOnDeleteSession(session._id)}
-                >
-                  &#10005;
-                </button>
-              </div>
-            </li>
-          ))}
+          {sessions.map((session: TSession, index: number) => {
+            const current = !!session.isCurrect;
+            return (
+              <li
+                key={index}
+                className={`py-4 flex justify-between items-center ${current ? " bg-emerald-300": 
+                "" } p-3 rounded-xl`}
+              >
+                <div>
+                  <p className="text-xs font-medium text-gray-900">
+                    {session.userAgent}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(session.createdAt).toLocaleString("en-US")}
+                  </p>
+                </div>
+                <div className="flex space-x-4">
+                  <button
+                    disabled={isPending || current}
+                    className="text-red-600 font-extrabold cursor-pointer hover:text-red-800 transition"
+                    onClick={() => handleOnDeleteSession(session._id)}
+                  >
+                    &#10005;
+                  </button>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className="text-gray-500">No sessions available.</p>

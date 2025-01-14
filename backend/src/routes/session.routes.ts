@@ -10,7 +10,7 @@ router.use(verifyUser)
 
 router.route('/').get(getSessionsHandler)
 
-router.route('/:id').get(deleteSessionsHandler)
+router.route('/:id').delete(deleteSessionsHandler)
 
 
 

@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/useAuth";
 import { verifyEmailRequest } from "@/lib/api";
 import { errorToast, successToast } from "@/lib/toast";
 import { useMutation } from "@tanstack/react-query";
@@ -6,7 +7,8 @@ import { useNavigate, useParams } from "react-router-dom";
 const VerifyEmailPage = () => {
   const naviagte = useNavigate();
   const { code } = useParams();
-  console.log("code", code);
+  const {user} = useAuth()
+  console.log(user?.user)
 
   const {
     mutate: verifyEmail,
@@ -28,6 +30,8 @@ const VerifyEmailPage = () => {
     errorToast("Invalid verification code");
     return;
   }
+
+  
 
   const handleOnVerifyButton = async () => {
     verifyEmail(code);
