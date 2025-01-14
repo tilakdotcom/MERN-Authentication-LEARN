@@ -16,7 +16,7 @@ const verifyUser = asyncHandler(
       appAssert(
         token,
         UNAUTHORIZED,
-        "Not authorized, token is required",
+        "Not authorized, token is required gg",
         ApiErrorCode.INVALID_ACCCESS_TOKEN
       );
 

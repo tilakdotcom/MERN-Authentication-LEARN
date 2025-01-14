@@ -1,4 +1,3 @@
-import assert from "node:assert";
 import { HttpStatusCode } from "../constants/http";
 import ApiError from "./ApiError";
 import ApiErrorCode from "../constants/appErroCode";
@@ -14,7 +13,12 @@ type AppAssert = (
   appErrorCode?: ApiErrorCode
 ) => asserts condition;
 
-const appAssert: AppAssert = (condition, httpStatusCode, message, appErrorCode) => {
+const appAssert: AppAssert = (
+  condition,
+  httpStatusCode,
+  message,
+  appErrorCode = ApiErrorCode.INTERNAL_SERVER_ERROR
+) => {
   if (!condition) {
     throw new ApiError(httpStatusCode, message, appErrorCode);
   }
